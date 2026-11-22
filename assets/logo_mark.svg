@@ -1,8 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
-  <!-- Warm Coral Heart (Main Care Symbol) -->
-  <path d="M33.5 17.8C36.8 11.4 45.8 10.6 50.2 15.8C54.4 20.8 52.8 29.4 45.4 36.2C40.6 40.6 35.8 43.8 33.4 45.2C32.5 45.7 31.4 45.6 30.6 44.9C28.2 42.9 22.8 38.2 18.8 33.2C13.6 26.7 14.5 19.3 19.8 15.8C24.8 12.5 30.8 14.2 33.5 17.8Z" fill="#FF9278"/>
-  <!-- Left Sage Teal Leaf -->
-  <path d="M9.5 45.2C9.2 43.8 10.2 42.6 11.6 42.6C19.8 42.6 27.6 46.8 30.8 53.6C31.3 54.6 30.7 55.8 29.6 56.1C20.4 58.6 11.6 53.8 9.5 45.2Z" fill="#5E8C7E"/>
-  <!-- Right Soft Peach Sprout Leaf -->
-  <path d="M36.8 53.8C38.2 46.5 44.2 41.2 51.6 40.6C52.9 40.5 53.9 41.6 53.6 42.9C52.2 49.8 46.2 54.4 38.6 55.4C37.4 55.6 36.5 54.8 36.8 53.8Z" fill="#FFAD96"/>
+  <defs>
+    <linearGradient id="hc-bg-grad" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0B1E33"/>
+      <stop offset="52%" stop-color="#0F3D4C"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+    <linearGradient id="hc-arc-grad" x1="19" y1="33.5" x2="45" y2="27.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5EEAD4"/>
+      <stop offset="100%" stop-color="#2DD4BF"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#hc-bg-grad)"/>
+  <rect x="2.6" y="2.6" width="58.8" height="58.8" rx="15.4" stroke="rgba(255,255,255,0.16)" stroke-width="1.2"/>
+  <rect x="15.5" y="17" width="7" height="30" rx="3.5" fill="#FFFFFF"/>
+  <rect x="41.5" y="24.5" width="7" height="22.5" rx="3.5" fill="#FFFFFF"/>
+  <path d="M19 33.5Q32 25.2 45 33.5" stroke="url(#hc-arc-grad)" stroke-width="5.6" stroke-linecap="round"/>
+  <circle cx="45" cy="17.5" r="3.6" fill="#FB7185"/>
 </svg>
