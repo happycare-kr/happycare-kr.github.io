@@ -3,12 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>행복케어 SaaS 본사 구독 · 기관 관리</title>
+<link rel="icon" href="/favicon.ico?v=20261123L1">
+<link rel="icon" type="image/svg+xml" href="/assets/logo_mark.svg?v=20261123L1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<title>L1 SaaS 본사 구독 · 기관 관리</title>
 <style>
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #F1F5F9; color: #0F172A; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; overflow-x: hidden; }
+  html, body { margin: 0; padding: 0; background: #F4F6FA; color: #0F172A; font-family: 'Pretendard Variable', 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; font-variant-emoji: text; overflow-x: hidden; }
   .sa-top {
-    background: #1B365D; color: #FFF; padding: 10px 16px;
+    background: #1E3A8A; color: #FFF; padding: 10px 16px;
     display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
     box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
   }
@@ -22,8 +25,8 @@
     display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
   }
   .btn:hover { background: #F8FAFC; }
-  .btn.pri { background: #0F766E; border-color: #0F766E; color: #FFF; }
-  .btn.pri:hover { background: #0D5F59; }
+  .btn.pri { background: #2563EB; border-color: #2563EB; color: #FFF; }
+  .btn.pri:hover { background: #1D4ED8; }
   .btn.blue { background: #1D4ED8; border-color: #1D4ED8; color: #FFF; }
   .btn.warn { background: #D97706; border-color: #D97706; color: #FFF; }
   .btn.danger { background: #DC2626; border-color: #DC2626; color: #FFF; }
@@ -49,7 +52,7 @@
     border: 1px solid #CBD5E1; background: #F8FAFC; color: #334155; border-radius: 999px;
     padding: 5px 11px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
   }
-  .fpill.active { background: #1B365D; border-color: #1B365D; color: #FFF; }
+  .fpill.active { background: #2563EB; border-color: #2563EB; color: #FFF; }
   .search-inp { border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px 10px; font-size: 12.5px; width: 250px; max-width: 100%; }
   .tbl-wrap { width: 100%; overflow-x: auto; }
   table.sa-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -70,7 +73,7 @@
   .st-readonly { background: #FEE2E2; color: #B91C1C; }
   .st-locked { background: #7F1D1D; color: #FFF; }
   .feat-badge { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 10.5px; font-weight: 800; margin: 1px; background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
-  .feat-off { background: #F1F5F9; color: #94A3B8; border-color: #E2E8F0; text-decoration: line-through; }
+  .feat-off { background: #F4F6FA; color: #94A3B8; border-color: #E2E8F0; text-decoration: line-through; }
   .act-cell { display: flex; gap: 4px; flex-wrap: wrap; max-width: 245px; }
   .srv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 12.5px; line-height: 1.65; }
   @media (max-width: 900px) { .srv-grid { grid-template-columns: 1fr; } }
@@ -85,7 +88,7 @@
     display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 18px 40px rgba(15,23,42,.35);
   }
   .md-head {
-    background: #1B365D; color: #FFF; padding: 11px 15px; display: flex;
+    background: #1E3A8A; color: #FFF; padding: 11px 15px; display: flex;
     align-items: center; justify-content: space-between; font-weight: 900; font-size: 14px;
   }
   .md-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
@@ -109,7 +112,7 @@
 
 <header class="sa-top">
   <div class="sa-title-wrap">
-    <div class="sa-title">행복케어 SaaS 본사 구독 · 기관 관리</div>
+    <svg width="26" height="26" viewBox="0 0 64 64" fill="none" data-brand-logo="L1" style="flex:0 0 26px;border-radius:7px;border:1px solid rgba(255,255,255,0.28);"><rect x="2" y="2" width="60" height="60" rx="15" fill="#2563EB"/><path d="M 23.8 17.5 A 6.4 6.4 0 0 0 17.4 23.9 V 40.1 A 6.4 6.4 0 0 0 23.8 46.5 H 31.0 A 6.4 6.4 0 0 0 37.4 40.1 H 25.1 A 1.3 1.3 0 0 1 23.8 38.8 V 17.5 Z" fill="#FFFFFF"/><path d="M 46.6 17.5 H 40.2 C 39.0 19.6 36.7 21.1 34.0 21.9 V 27.5 C 36.6 27.1 38.8 26.0 40.2 24.4 V 39.8 C 40.2 42.9 38.6 45.3 36.2 46.5 H 40.2 A 6.4 6.4 0 0 0 46.6 40.1 V 17.5 Z" fill="#FFFFFF"/></svg><div class="sa-title">L1 SaaS 본사 구독 · 기관 관리</div>
     <span class="sa-badge" id="sa-url-pill">서버 URL 확인 중...</span>
     <button type="button" class="btn xs" onclick="copyMainLoginUrl()">주소 복사</button>
   </div>
@@ -707,7 +710,7 @@ function openWelcomeFor(ag) {
   const info = _overview.serverInfo || {};
   const loginUrl = (info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html';
   const msg =
-    '[행복케어 ERP 개통 안내]\n' +
+    '[L1 장기요양 통합관리 시스템 개통 안내]\n' +
     '기관명: ' + t.agencyName + '\n' +
     '기관기호(11자리): ' + t.agency + '\n' +
     '이용 플랜: ' + (t.planName || t.billingType) + '\n' +

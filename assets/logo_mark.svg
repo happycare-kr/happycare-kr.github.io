@@ -1,19 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
-  <defs>
-    <linearGradient id="hc-bg-grad" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0B1E33"/>
-      <stop offset="52%" stop-color="#0F3D4C"/>
-      <stop offset="100%" stop-color="#0D9488"/>
-    </linearGradient>
-    <linearGradient id="hc-arc-grad" x1="19" y1="33.5" x2="45" y2="27.5" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#5EEAD4"/>
-      <stop offset="100%" stop-color="#2DD4BF"/>
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#hc-bg-grad)"/>
-  <rect x="2.6" y="2.6" width="58.8" height="58.8" rx="15.4" stroke="rgba(255,255,255,0.16)" stroke-width="1.2"/>
-  <rect x="15.5" y="17" width="7" height="30" rx="3.5" fill="#FFFFFF"/>
-  <rect x="41.5" y="24.5" width="7" height="22.5" rx="3.5" fill="#FFFFFF"/>
-  <path d="M19 33.5Q32 25.2 45 33.5" stroke="url(#hc-arc-grad)" stroke-width="5.6" stroke-linecap="round"/>
-  <circle cx="45" cy="17.5" r="3.6" fill="#FB7185"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" data-brand-logo="L1">
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="#2563EB"/>
+  <path d="M 23.8 17.5 A 6.4 6.4 0 0 0 17.4 23.9 V 40.1 A 6.4 6.4 0 0 0 23.8 46.5 H 31.0 A 6.4 6.4 0 0 0 37.4 40.1 H 25.1 A 1.3 1.3 0 0 1 23.8 38.8 V 17.5 Z" fill="#FFFFFF"/>
+  <path d="M 46.6 17.5 H 40.2 C 39.0 19.6 36.7 21.1 34.0 21.9 V 27.5 C 36.6 27.1 38.8 26.0 40.2 24.4 V 39.8 C 40.2 42.9 38.6 45.3 36.2 46.5 H 40.2 A 6.4 6.4 0 0 0 46.6 40.1 V 17.5 Z" fill="#FFFFFF"/>
 </svg>

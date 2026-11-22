@@ -1,13 +1,13 @@
 {
-  "name": "행복케어 스마트 통합앱",
-  "short_name": "행복케어앱",
+  "name": "L1 장기요양 통합관리 시스템",
+  "short_name": "L1",
   "description": "요양보호사 · 수급자/보호자 · 사회복지사 통합 모바일 앱",
   "start_url": "/care_app.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1B365D",
-  "theme_color": "#1B365D",
+  "background_color": "#2563EB",
+  "theme_color": "#1E3A8A",
   "icons": [
     {
       "src": "/assets/app_icon_192.png",
