@@ -46,6 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToSectionId(id);
         history.replaceState(null, '', '#' + id);
         updateActiveSubnav();
+        if (id === 'reservation') {
+          setTimeout(() => {
+            const sec = document.getElementById('reservation');
+            const inp = sec && (sec.querySelector('.res-pane.active input[name="name"]') || sec.querySelector('input[name="name"]'));
+            if (inp) inp.focus({ preventScroll: true });
+          }, 120);
+        }
       }
     });
   });
@@ -309,6 +316,116 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
+  function escHtml(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  async function submitConsultationToControlCenter(payload) {
+    const item = Object.assign({
+      source: 'homepage_form',
+      actorName: '홈페이지접수',
+      actorRole: '시스템',
+      category: '수급자',
+      target: 'client',
+      status: '미연락'
+    }, payload || {});
+
+    const isLocalHost = (
+      location.hostname === '127.0.0.1' ||
+      location.hostname === 'localhost'
+    );
+
+    if (isLocalHost) {
+      try {
+        const lr = await fetch('/api/consult/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        });
+        const lj = await lr.json().catch(() => null);
+        if (lj && lj.ok && Number(lj.rowNumber || 0) > 0) {
+          if (lj.tgBundle) await flushTelegramBundleClient(lj.tgBundle);
+          return { ok: true, rowNumber: Number(lj.rowNumber), category: lj.category || item.category };
+        }
+        if (lj && lj.error && lr.status < 500) {
+          return { ok: false, error: String(lj.error) };
+        }
+      } catch (localErr) {}
+    }
+
+    if (!window.HC_APPSCRIPT_URL) {
+      return { ok: false, error: '관제센터 연동 주소가 설정되지 않았습니다.' };
+    }
+
+    let lastErr = '';
+    const qs = new URLSearchParams({
+      action: 'addRow',
+      source: String(item.source || 'homepage_form'),
+      actorName: String(item.actorName || '홈페이지접수'),
+      actorRole: String(item.actorRole || '시스템'),
+      createdAt: String(item.createdAt || ''),
+      category: String(item.category || '수급자'),
+      target: String(item.target || 'client'),
+      name: String(item.name || ''),
+      phone: String(item.phone || ''),
+      region: String(item.region || ''),
+      service: String(item.service || ''),
+      workTime: String(item.workTime || ''),
+      hasCar: String(item.hasCar || ''),
+      gradeOrCert: String(item.gradeOrCert || ''),
+      note: String(item.note || ''),
+      status: String(item.status || '미연락'),
+      canReadJson: '1',
+      _t: String(Date.now())
+    });
+
+    try {
+      const r = await fetch(window.HC_APPSCRIPT_URL + '?' + qs.toString(), {
+        method: 'GET',
+        cache: 'no-store'
+      });
+      if (r && r.ok) {
+        const j = await r.json().catch(() => null);
+        if (j && j.ok && Number(j.rowNumber || 0) > 0) {
+          if (j.tgBundle) await flushTelegramBundleClient(j.tgBundle);
+          return { ok: true, rowNumber: Number(j.rowNumber), category: j.category || item.category };
+        }
+        if (j && j.error) lastErr = String(j.error);
+      } else if (r) {
+        lastErr = 'HTTP ' + r.status;
+      }
+    } catch (err1) {
+      lastErr = String((err1 && err1.message) || err1 || '');
+    }
+
+    // Readable CORS POST retry (never uses opaque no-cors, never fakes ok:true)
+    try {
+      const pr = await fetch(window.HC_APPSCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(Object.assign({}, item, { action: 'addRow', canReadJson: '1' }))
+      });
+      if (pr && pr.ok) {
+        const pj = await pr.json().catch(() => null);
+        if (pj && pj.ok && Number(pj.rowNumber || 0) > 0) {
+          if (pj.tgBundle) await flushTelegramBundleClient(pj.tgBundle);
+          return { ok: true, rowNumber: Number(pj.rowNumber), category: pj.category || item.category };
+        }
+        if (pj && pj.error) lastErr = String(pj.error);
+      }
+    } catch (err2) {
+      if (!lastErr) lastErr = String((err2 && err2.message) || err2 || '');
+    }
+
+    return { ok: false, error: lastErr || '일시적인 통신 지연으로 관제센터 접수 확인에 실패했습니다.' };
+  }
+  window.submitConsultationToControlCenter = submitConsultationToControlCenter;
+
   document.querySelectorAll('.hc-res-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -363,64 +480,16 @@ document.addEventListener('DOMContentLoaded', () => {
         staffMemo: '',
         updatedAt: ''
       };
-      saveReservationLocal(item);
 
       const submitBtn = form.querySelector('.res-submit-btn');
       const origBtnTxt = submitBtn ? submitBtn.textContent : '';
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = '접수 중...';
+        submitBtn.textContent = '관제센터로 접수 중...';
       }
 
-      // 1) Google Apps Script (수급자상담예약 시트 기록 + 텔레그램 실시간 알림)
-      if (window.HC_APPSCRIPT_URL) {
-        let gasSent = false;
-        const qs = new URLSearchParams({
-          action: 'addRow',
-          source: 'homepage_form',
-          actorName: '홈페이지접수',
-          actorRole: '시스템',
-          createdAt: createdAt,
-          category: item.category,
-          target: item.target,
-          name: item.name,
-          phone: item.phone,
-          region: item.region,
-          service: item.service,
-          workTime: item.workTime,
-          hasCar: item.hasCar,
-          gradeOrCert: item.gradeOrCert,
-          note: item.note,
-          status: '미연락',
-          canReadJson: '1',
-          _t: String(Date.now())
-        });
-        try {
-          const r = await fetch(window.HC_APPSCRIPT_URL + '?' + qs.toString(), {
-            method: 'GET',
-            cache: 'no-store'
-          });
-          if (r && r.ok) {
-            const j = await r.json();
-            if (j && j.ok) {
-              gasSent = true;
-              if (j.tgBundle) await flushTelegramBundleClient(j.tgBundle);
-            }
-          }
-        } catch (err) {}
-        if (!gasSent) {
-          try {
-            await fetch(window.HC_APPSCRIPT_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(item)
-            });
-          } catch (e2) {}
-        }
-      }
+      const res = await submitConsultationToControlCenter(item);
 
-      // 2) Netlify Forms 백업 저장 (Netlify 호스팅일 때만 전송해 GitHub Pages 405 응답 방지)
       if (location.hostname.endsWith('netlify.app')) {
         try {
           const params = new URLSearchParams();
@@ -442,11 +511,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const box = form.querySelector('.res-success-box');
-      if (box) {
-        box.style.display = 'block';
-        box.innerHTML = `<strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`;
+      if (res && res.ok && Number(res.rowNumber || 0) > 0) {
+        saveReservationLocal(Object.assign({}, item, { rowNumber: res.rowNumber }));
+        if (box) {
+          box.classList.remove('is-error');
+          box.style.display = 'block';
+          box.innerHTML = `<strong>관제센터에 상담 예약이 정상 접수되었습니다 (접수번호 #${Number(res.rowNumber)}).</strong><br>담당 사회복지사가 확인 후 <strong>${escHtml(formattedPhone)}</strong> 번호로 연락드리겠습니다.`;
+        }
+        form.reset();
+      } else {
+        if (box) {
+          box.classList.add('is-error');
+          box.style.display = 'block';
+          box.innerHTML = `<strong>온라인 접수 전송이 완료되지 않았습니다.</strong><br>${escHtml((res && res.error) || '잠시 후 다시 시도해 주세요.')} 입력하신 내용은 그대로 유지되었으니 신청 버튼을 다시 누르시거나 <a href="tel:0507-1349-4004" style="font-weight:900;text-decoration:underline;color:#B91C1C;">0507-1349-4004</a>로 바로 전화 주세요.`;
+        }
       }
-      form.reset();
     });
   });
 
@@ -506,6 +585,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const carVal = isWorker ? ((rawCar.includes('미보유') || rawCar.includes('없')) ? '미보유' : ((rawCar.includes('보유') || rawCar.includes('있') || rawCar.includes('자차')) ? '보유' : rawCar)) : '';
 
     const item = {
+      source: 'homepage_chatbot',
+      actorName: '홈페이지챗봇',
+      actorRole: '시스템',
+      createdAt: createdAt,
       category: isWorker ? '요양보호사' : '수급자',
       target: isWorker ? 'worker' : 'client',
       name: flow.data.name || '',
@@ -519,50 +602,8 @@ document.addEventListener('DOMContentLoaded', () => {
       status: '미연락'
     };
 
-    if (window.HC_APPSCRIPT_URL) {
-      let gasSent = false;
-      const qs = new URLSearchParams({
-        action: 'addRow',
-        source: 'homepage_chatbot',
-        actorName: '홈페이지챗봇',
-        actorRole: '시스템',
-        createdAt: createdAt,
-        category: item.category,
-        target: item.target,
-        name: item.name,
-        phone: item.phone,
-        region: item.region,
-        service: item.service,
-        workTime: item.workTime,
-        hasCar: item.hasCar,
-        gradeOrCert: item.gradeOrCert,
-        note: item.note,
-        status: '미연락',
-        canReadJson: '1',
-        _t: String(Date.now())
-      });
-      try {
-        const r = await fetch(window.HC_APPSCRIPT_URL + '?' + qs.toString(), { method: 'GET', cache: 'no-store' });
-        if (r && r.ok) {
-          const j = await r.json();
-          if (j && j.ok) {
-            gasSent = true;
-            if (j.tgBundle) await flushTelegramBundleClient(j.tgBundle);
-          }
-        }
-      } catch (err) {}
-      if (!gasSent) {
-        try {
-          await fetch(window.HC_APPSCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(item)
-          });
-        } catch (e2) {}
-      }
-    }
-    return formattedPhone;
+    const res = await submitConsultationToControlCenter(item);
+    return { ok: Boolean(res && res.ok && Number(res.rowNumber || 0) > 0), rowNumber: Number((res && res.rowNumber) || 0), phone: formattedPhone, error: (res && res.error) || '' };
   }
 
   function answerQuery(q) {
@@ -637,8 +678,12 @@ document.addEventListener('DOMContentLoaded', () => {
           chatFlow = null;
           if (chatInput) chatInput.placeholder = '궁금한 점을 입력하세요 (예: 3등급 비용, 가족요양)';
           appendBotMsg(`입력해주신 내용을 접수하고 있습니다...`);
-          const formattedPhone = await submitInteractiveFlow(finishedFlow);
-          appendBotMsg(`<strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`);
+          const resClient = await submitInteractiveFlow(finishedFlow);
+          if (resClient && resClient.ok && resClient.rowNumber > 0) {
+            appendBotMsg(`<strong>관제센터에 정상 접수되었습니다 (접수번호 #${Number(resClient.rowNumber)}).</strong><br>담당 사회복지사가 확인 후 <strong>${escHtml(resClient.phone)}</strong> 번호로 연락드리겠습니다.`);
+          } else {
+            appendBotMsg(`<strong>온라인 접수 전송이 완료되지 않았습니다.</strong><br>${escHtml((resClient && resClient.error) || '잠시 후 다시 시도해 주세요.')} 급하신 경우 <a href="tel:0507-1349-4004" style="font-weight:900;text-decoration:underline;color:#B91C1C;">0507-1349-4004</a>로 바로 전화 주세요.`);
+          }
           return;
         }
         if (chatFlow.step === 5 && isW) {
@@ -648,8 +693,12 @@ document.addEventListener('DOMContentLoaded', () => {
           chatFlow = null;
           if (chatInput) chatInput.placeholder = '궁금한 점을 입력하세요 (예: 3등급 비용, 가족요양)';
           appendBotMsg(`입력해주신 구직 등록 내용을 접수하고 있습니다...`);
-          const formattedPhone = await submitInteractiveFlow(finishedFlow);
-          appendBotMsg(`<strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`);
+          const resWorker = await submitInteractiveFlow(finishedFlow);
+          if (resWorker && resWorker.ok && resWorker.rowNumber > 0) {
+            appendBotMsg(`<strong>관제센터에 정상 접수되었습니다 (접수번호 #${Number(resWorker.rowNumber)}).</strong><br>담당 사회복지사가 확인 후 <strong>${escHtml(resWorker.phone)}</strong> 번호로 연락드리겠습니다.`);
+          } else {
+            appendBotMsg(`<strong>온라인 접수 전송이 완료되지 않았습니다.</strong><br>${escHtml((resWorker && resWorker.error) || '잠시 후 다시 시도해 주세요.')} 급하신 경우 <a href="tel:0507-1349-4004" style="font-weight:900;text-decoration:underline;color:#B91C1C;">0507-1349-4004</a>로 바로 전화 주세요.`);
+          }
           return;
         }
       }
