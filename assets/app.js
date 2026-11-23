@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const isMobile = document.body.classList.contains('mobile-mode') || window.innerWidth <= 768 || isMobileDevice;
     if (modeToggleBtn) {
-      modeToggleBtn.textContent = document.body.classList.contains('mobile-mode') ? '💻 PC' : '📱 모바일';
+      modeToggleBtn.textContent = document.body.classList.contains('mobile-mode') ? 'PC' : '모바일';
     }
     if (tabBtns.length) {
       applyServiceTab(isMobile ? 'visit' : 'all');
@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const box = form.querySelector('.res-success-box');
       if (box) {
         box.style.display = 'block';
-        box.innerHTML = `✅ <strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`;
+        box.innerHTML = `<strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`;
       }
       form.reset();
     });
@@ -489,9 +489,9 @@ document.addEventListener('DOMContentLoaded', () => {
       chatInput.focus();
     }
     if (type === 'worker') {
-      appendBotMsg(`<strong>👩‍⚕️ ${chatFlow.subTypeLabel} (대화형 접수)</strong><br>양식을 복사해서 채우실 필요 없이 질문에 하나씩 답해주시면 관제센터로 바로 접수됩니다 😊<br><span style="font-size:12px;color:#64748B;">(취소하시려면 '취소'라고 입력해 주세요)</span><br><br><strong>[질문 1/5]</strong> 선생님의 <strong>성함</strong>이 어떻게 되시나요?`);
+      appendBotMsg(`<strong> ${chatFlow.subTypeLabel} (대화형 접수)</strong><br>양식을 복사해서 채우실 필요 없이 질문에 하나씩 답해주시면 관제센터로 바로 접수됩니다<br><span style="font-size:12px;color:#64748B;">(취소하시려면 '취소'라고 입력해 주세요)</span><br><br><strong>[질문 1/5]</strong> 선생님의 <strong>성함</strong>이 어떻게 되시나요?`);
     } else {
-      appendBotMsg(`<strong>👵 ${chatFlow.subTypeLabel} (대화형 접수)</strong><br>복잡한 양식 없이 질문에 하나씩 답해주시면 바로 접수됩니다 😊<br><span style="font-size:12px;color:#64748B;">(취소하시려면 '취소'라고 입력해 주세요)</span><br><br><strong>[질문 1/4]</strong> 돌봄이 필요하신 어르신(또는 신청하시는 보호자)의 <strong>성함</strong>이 어떻게 되시나요?`);
+      appendBotMsg(`<strong>${chatFlow.subTypeLabel} (대화형 접수)</strong><br>복잡한 양식 없이 질문에 하나씩 답해주시면 바로 접수됩니다<br><span style="font-size:12px;color:#64748B;">(취소하시려면 '취소'라고 입력해 주세요)</span><br><br><strong>[질문 1/4]</strong> 돌봄이 필요하신 어르신(또는 신청하시는 보호자)의 <strong>성함</strong>이 어떻게 되시나요?`);
     }
   }
 
@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (t === '취소' || t === '처음으로') {
         chatFlow = null;
         if (chatInput) chatInput.placeholder = '궁금한 점을 입력하세요 (예: 파견신청, 구직등록, 3등급 비용)';
-        appendBotMsg(`진행 중인 접수를 취소했습니다. 아래에서 원하시는 메뉴를 다시 선택해 주세요.<div class="chat-chips" style="margin-top:8px;"><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')">👵 돌봄·요양사 파견 신청</button><button type="button" class="chat-chip" onclick="window.__hcAsk('요양보호사 구직 등록 시작')">👩‍⚕️ 요양보호사 구직 등록</button></div>`);
+        appendBotMsg(`진행 중인 접수를 취소했습니다. 아래에서 원하시는 메뉴를 다시 선택해 주세요.<div class="chat-chips" style="margin-top:8px;"><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')">돌봄·요양사 파견 신청</button><button type="button" class="chat-chip" onclick="window.__hcAsk('요양보호사 구직 등록 시작')"> 요양보호사 구직 등록</button></div>`);
         return;
       }
 
@@ -636,9 +636,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const finishedFlow = chatFlow;
           chatFlow = null;
           if (chatInput) chatInput.placeholder = '궁금한 점을 입력하세요 (예: 3등급 비용, 가족요양)';
-          appendBotMsg(`⏳ 입력해주신 내용을 접수하고 있습니다...`);
+          appendBotMsg(`입력해주신 내용을 접수하고 있습니다...`);
           const formattedPhone = await submitInteractiveFlow(finishedFlow);
-          appendBotMsg(`✅ <strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`);
+          appendBotMsg(`<strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`);
           return;
         }
         if (chatFlow.step === 5 && isW) {
@@ -647,21 +647,21 @@ document.addEventListener('DOMContentLoaded', () => {
           const finishedFlow = chatFlow;
           chatFlow = null;
           if (chatInput) chatInput.placeholder = '궁금한 점을 입력하세요 (예: 3등급 비용, 가족요양)';
-          appendBotMsg(`⏳ 입력해주신 구직 등록 내용을 접수하고 있습니다...`);
+          appendBotMsg(`입력해주신 구직 등록 내용을 접수하고 있습니다...`);
           const formattedPhone = await submitInteractiveFlow(finishedFlow);
-          appendBotMsg(`✅ <strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`);
+          appendBotMsg(`<strong>정상 접수되었습니다.</strong><br>담당 사회복지사가 확인 후 <strong>${formattedPhone}</strong> 번호로 연락드리겠습니다.`);
           return;
         }
       }
 
       if (t.includes('수가') || t.includes('본인부담') || t.includes('비용') || t.includes('계산')) {
-        appendBotMsg(`<strong>2026년 장기요양 월 한도액 및 본인부담금 (일반 15% 기준)</strong><br>• 1등급: 2,512,900원<br>• 2등급: 2,331,200원<br>• 3등급: 1,528,200원<br>• 4등급: 1,409,700원<br>• 5등급: 1,208,900원<br>• 표준 3시간(180분) 월 20회 이용 시 일반 본인부담금은 <strong>월 171,060원</strong>(감경 9%는 102,640원, 6%는 68,420원, 기초수급 0원)입니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">👵 지금 바로 돌봄·파견 신청하기 (대화형)</button>`);
+        appendBotMsg(`<strong>2026년 장기요양 월 한도액 및 본인부담금 (일반 15% 기준)</strong><br>• 1등급: 2,512,900원<br>• 2등급: 2,331,200원<br>• 3등급: 1,528,200원<br>• 4등급: 1,409,700원<br>• 5등급: 1,208,900원<br>• 표준 3시간(180분) 월 20회 이용 시 일반 본인부담금은 <strong>월 171,060원</strong>(감경 9%는 102,640원, 6%는 68,420원, 기초수급 0원)입니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">지금 바로 돌봄·파견 신청하기 (대화형)</button>`);
       } else if (t.includes('등급') || t.includes('신청') || t.includes('인정조사')) {
-        appendBotMsg(`<strong>장기요양등급 신청 절차 안내</strong><br>1) 국민건강보험공단 지사 또는 The건강보험 앱 접수<br>2) 공단 직원 가정 방문조사 (거동·인지 상태 확인)<br>3) 의사소견서 제출 및 등급판정위원회 심의 (약 3~4주 소요)<br><br>방문조사 전 준비 사항과 무료 등급신청 대행을 도와드립니다.<br><button type="button" class="chat-chip" onclick="window.__hcAsk('장기요양등급 신청 상담 시작')" style="margin-top:8px;background:#D95B43;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">📝 등급 신청 상담 접수하기 (대화형)</button>`);
+        appendBotMsg(`<strong>장기요양등급 신청 절차 안내</strong><br>1) 국민건강보험공단 지사 또는 The건강보험 앱 접수<br>2) 공단 직원 가정 방문조사 (거동·인지 상태 확인)<br>3) 의사소견서 제출 및 등급판정위원회 심의 (약 3~4주 소요)<br><br>방문조사 전 준비 사항과 무료 등급신청 대행을 도와드립니다.<br><button type="button" class="chat-chip" onclick="window.__hcAsk('장기요양등급 신청 상담 시작')" style="margin-top:8px;background:#D95B43;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">등급 신청 상담 접수하기 (대화형)</button>`);
       } else if (t.includes('가족요양') || t.includes('60분') || t.includes('90분')) {
-        appendBotMsg(`<strong>가족요양 인정 기준 안내</strong><br>요양보호사 자격증을 가진 가족이 어르신을 돌보실 때:<br>• <strong>기본 기준:</strong> 1일 60분 (월 최대 20일), 타 직종 월 근로시간 160시간 미만<br>• <strong>예외 기준(1일 90분·월 31일):</strong> 배우자 요양보호사가 만 65세 이상이거나 중증 치매 문제행동이 있는 경우<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">👵 가족요양 상담 접수하기 (대화형)</button>`);
+        appendBotMsg(`<strong>가족요양 인정 기준 안내</strong><br>요양보호사 자격증을 가진 가족이 어르신을 돌보실 때:<br>• <strong>기본 기준:</strong> 1일 60분 (월 최대 20일), 타 직종 월 근로시간 160시간 미만<br>• <strong>예외 기준(1일 90분·월 31일):</strong> 배우자 요양보호사가 만 65세 이상이거나 중증 치매 문제행동이 있는 경우<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">가족요양 상담 접수하기 (대화형)</button>`);
       } else if (t.includes('목욕')) {
-        appendBotMsg(`<strong>2026년 방문목욕 1회 급여비용 (일반 본인부담 15%)</strong><br>• 차량이용(차량내): 88,990원 (본인부담 <strong>13,340원</strong>)<br>• 차량이용(가정내): 80,230원 (본인부담 <strong>12,030원</strong>)<br>• 차량미이용(가정목욕): 50,100원 (본인부담 <strong>7,515원</strong>)<br>요양보호사 2명이 방문하여 안전하게 목욕을 도와드립니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">🛁 방문목욕 신청하기 (대화형)</button>`);
+        appendBotMsg(`<strong>2026년 방문목욕 1회 급여비용 (일반 본인부담 15%)</strong><br>• 차량이용(차량내): 88,990원 (본인부담 <strong>13,340원</strong>)<br>• 차량이용(가정내): 80,230원 (본인부담 <strong>12,030원</strong>)<br>• 차량미이용(가정목욕): 50,100원 (본인부담 <strong>7,515원</strong>)<br>요양보호사 2명이 방문하여 안전하게 목욕을 도와드립니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">방문목욕 신청하기 (대화형)</button>`);
       } else if (t.includes('요양보호사') || t.includes('채용') || t.includes('구직') || t.includes('등록') || t.includes('일자리')) {
         startInteractiveFlow('worker', '요양보호사 구직 등록');
       } else if (t.includes('돌봄') || t.includes('파견') || t.includes('보호자') || t.includes('어르신') || t.includes('방문요양')) {
@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (t.includes('카톡') || t.includes('카카오')) {
         appendBotMsg(`<strong>카카오톡 상담 안내</strong><br>아래 링크를 눌러 카카오톡에서도 질문에 답하는 방식으로 간편하게 접수하실 수 있습니다.<br>• <a href="https://pf.kakao.com/_XQwxmu/chat" target="_blank" rel="noopener" style="color:#0F6E72;font-weight:800;text-decoration:underline;">카카오톡 상담 열기 ↗</a>`);
       } else {
-        appendBotMsg(`문의주신 <strong>"${t}"</strong> 내용을 바로 접수해 드릴까요?<br>아래 버튼을 누르시면 양식 복사 없이 질문에 하나씩 답하여 간편하게 접수됩니다.<div class="chat-chips" style="margin-top:8px;"><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;font-weight:700;">👵 돌봄·요양사 파견 신청</button><button type="button" class="chat-chip" onclick="window.__hcAsk('요양보호사 구직 등록 시작')" style="background:#D95B43;color:#fff;font-weight:700;">👩‍⚕️ 요양보호사 구직 등록</button></div>`);
+        appendBotMsg(`문의주신 <strong>"${t}"</strong> 내용을 바로 접수해 드릴까요?<br>아래 버튼을 누르시면 양식 복사 없이 질문에 하나씩 답하여 간편하게 접수됩니다.<div class="chat-chips" style="margin-top:8px;"><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;font-weight:700;">돌봄·요양사 파견 신청</button><button type="button" class="chat-chip" onclick="window.__hcAsk('요양보호사 구직 등록 시작')" style="background:#D95B43;color:#fff;font-weight:700;"> 요양보호사 구직 등록</button></div>`);
       }
     }, 220);
   }
