@@ -433,6 +433,12 @@
     <priority>0.92</priority>
   </url>
   <url>
+    <loc>https://happycare-kr.github.io/guides/l162.html</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://happycare-kr.github.io/guides/l161.html</loc>
     <lastmod>2026-11-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -1520,12 +1526,6 @@
   </url>
   <url>
     <loc>https://happycare-kr.github.io/guides/l142.html</loc>
-    <lastmod>2026-11-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://happycare-kr.github.io/guides/l162.html</loc>
     <lastmod>2026-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

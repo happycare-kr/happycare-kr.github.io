@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /go/
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
 Disallow: /erp.html
@@ -11,7 +10,6 @@ Disallow: /doc_view.html
 
 User-agent: Yeti
 Allow: /
-Disallow: /go/
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
 Disallow: /erp.html
@@ -22,7 +20,6 @@ Disallow: /doc_view.html
 
 User-agent: Googlebot
 Allow: /
-Disallow: /go/
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
 Disallow: /erp.html
@@ -36,7 +33,6 @@ Allow: /
 
 User-agent: GoogleOther
 Allow: /
-Disallow: /go/
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
 Disallow: /erp.html
@@ -47,7 +43,6 @@ Disallow: /doc_view.html
 
 User-agent: Google-CloudVertexBot
 Allow: /
-Disallow: /go/
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
 Disallow: /erp.html
@@ -76,7 +71,6 @@ Allow: /
 
 User-agent: Daumoa
 Allow: /
-Disallow: /go/
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
 Disallow: /erp.html
