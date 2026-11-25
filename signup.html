@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>L1 장기요양 통합관리 ERP 도입 · 30일 무료체험 신청</title>
+<style>
+  :root {
+    --pri: #1B365D;
+    --blue: #2563EB;
+    --bg: #F1F5F9;
+    --card: #FFFFFF;
+    --line: #CBD5E1;
+    --txt: #0F172A;
+    --sub: #475569;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; max-width: 100%; overflow-x: hidden;
+    font-family: 'Pretendard','Malgun Gothic','Noto Sans KR',sans-serif;
+    background: var(--bg); color: var(--txt);
+  }
+  .su-head {
+    background: linear-gradient(135deg, #1B365D 0%, #1E3A8A 100%);
+    color: #FFFFFF; padding: 14px 20px;
+    border-bottom: 3px solid #2563EB;
+  }
+  .su-head-in {
+    max-width: 920px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .su-brand {
+    display: inline-flex; align-items: center; gap: 10px; min-width: 0;
+  }
+  .su-title-grp { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+  .su-title-main { font-size: 16px; font-weight: 900; letter-spacing: -0.3px; }
+  .su-title-sub { font-size: 11.5px; color: #BFDBFE; font-weight: 600; }
+  .su-login-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 14px; border-radius: 9px; background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.34); color: #FFFFFF;
+    font-size: 12.5px; font-weight: 800; text-decoration: none; white-space: nowrap;
+  }
+  .su-login-link:hover { background: rgba(255,255,255,0.22); }
+  .su-wrap {
+    max-width: 920px; margin: 0 auto; padding: 20px 14px 36px;
+  }
+  .hero-box {
+    background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; margin-bottom: 16px;
+    box-shadow: 0 6px 20px rgba(15,23,42,0.05);
+  }
+  .hero-badge {
+    display: inline-block; padding: 4px 10px; border-radius: 999px;
+    background: #DBEAFE; color: #1E40AF; font-size: 11.5px; font-weight: 900; margin-bottom: 8px;
+  }
+  .hero-box h1 {
+    margin: 0 0 8px; font-size: 20px; font-weight: 900; color: var(--pri); letter-spacing: -0.4px;
+    line-height: 1.35;
+  }
+  .hero-box p {
+    margin: 0 0 12px; font-size: 13px; color: var(--sub); line-height: 1.6;
+  }
+  .feat-pills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .feat-pill {
+    padding: 5px 10px; border-radius: 8px; background: #EFF6FF; border: 1px solid #BFDBFE;
+    color: #1E3A8A; font-size: 11.5px; font-weight: 800;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; box-shadow: 0 8px 24px rgba(15,23,42,0.05);
+  }
+  .card-title {
+    margin: 0 0 14px; font-size: 16px; font-weight: 900; color: var(--pri);
+    padding-bottom: 10px; border-bottom: 1.5px solid #E2E8F0;
+  }
+  .fgrid {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px;
+  }
+  .fld { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .fld.full { grid-column: 1 / -1; }
+  .fld label { font-size: 12.5px; font-weight: 800; color: #1E293B; }
+  .req { color: #DC2626; }
+  .inp, select.inp, textarea.inp {
+    width: 100%; max-width: 100%; padding: 10px 12px; font-size: 14px; font-family: inherit;
+    border: 1.5px solid #CBD5E1; border-radius: 10px; background: #FFFFFF; color: var(--txt);
+    outline: none; transition: border-color .15s ease;
+  }
+  .inp:focus, select.inp:focus, textarea.inp:focus { border-color: var(--blue); }
+  .hint { font-size: 11.5px; color: #64748B; }
+  .svc-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px;
+  }
+  .svc-chk {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px;
+    border-radius: 10px; border: 1.5px solid #CBD5E1; background: #F8FAFC;
+    font-size: 13px; font-weight: 700; color: #1E293B; cursor: pointer;
+  }
+  .svc-chk input { width: 16px; height: 16px; accent-color: var(--blue); margin: 0; }
+  .err-box {
+    display: none; margin-top: 14px; padding: 10px 12px; border-radius: 10px;
+    background: #FEF2F2; border: 1.5px solid #FCA5A5; color: #B91C1C;
+    font-size: 13px; font-weight: 800;
+  }
+  .submit-row {
+    margin-top: 16px; display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .btn-submit {
+    flex: 1 1 260px; padding: 14px 18px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+    color: #FFFFFF; font-size: 15px; font-weight: 900; font-family: inherit;
+    cursor: pointer; box-shadow: 0 6px 16px rgba(37,99,235,0.28);
+  }
+  .btn-submit:disabled { opacity: 0.65; cursor: wait; }
+  .policy-note { font-size: 11.5px; color: #64748B; line-height: 1.5; }
+  .done-box {
+    display: none; text-align: center; padding: 26px 18px;
+  }
+  .done-badge {
+    display: inline-block; padding: 5px 12px; border-radius: 999px;
+    background: #D1FAE5; color: #065F46; font-size: 12px; font-weight: 900; margin-bottom: 10px;
+  }
+  .done-box h2 { margin: 0 0 10px; font-size: 19px; color: #065F46; font-weight: 900; }
+  .done-summary {
+    text-align: left; max-width: 480px; margin: 14px auto; padding: 14px;
+    background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 12px;
+    font-size: 13px; line-height: 1.7;
+  }
+  .done-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .btn-erp {
+    display: inline-block; padding: 11px 18px; border-radius: 10px;
+    background: var(--pri); color: #FFFFFF; font-weight: 900; font-size: 13.5px; text-decoration: none;
+  }
+  @media (max-width: 680px) {
+    .su-head { padding: 12px 14px; }
+    .hero-box, .card { padding: 16px 14px; }
+    .hero-box h1 { font-size: 17.5px; }
+    .fgrid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<header class="su-head">
+  <div class="su-head-in">
+    <div class="su-brand">
+      <svg width="36" height="36" viewBox="0 0 64 64" fill="none" data-brand-logo="L1" style="flex:0 0 36px;border-radius:10px;box-shadow:0 3px 10px rgba(37,99,235,.22);">
+        <rect x="2" y="2" width="60" height="60" rx="15" fill="#2563EB"/>
+        <path d="M 23.8 17.5 A 6.4 6.4 0 0 0 17.4 23.9 V 40.1 A 6.4 6.4 0 0 0 23.8 46.5 H 31.0 A 6.4 6.4 0 0 0 37.4 40.1 H 25.1 A 1.3 1.3 0 0 1 23.8 38.8 V 17.5 Z" fill="#FFFFFF"/>
+        <path d="M 46.6 17.5 H 40.2 C 39.0 19.6 36.7 21.1 34.0 21.9 V 27.5 C 36.6 27.1 38.8 26.0 40.2 24.4 V 39.8 C 40.2 42.9 38.6 45.3 36.2 46.5 H 40.2 A 6.4 6.4 0 0 0 46.6 40.1 V 17.5 Z" fill="#FFFFFF"/>
+      </svg>
+      <div class="su-title-grp">
+        <span class="su-title-main">L1 장기요양 통합관리 ERP</span>
+        <span class="su-title-sub">신규 기관 도입 · 30일 무료체험 신청</span>
+      </div>
+    </div>
+    <a class="su-login-link" href="/erp.html">기존 기관 로그인</a>
+  </div>
+</header>
+
+<main class="su-wrap">
+  <section class="hero-box">
+    <span class="hero-badge">기관별 독립 데이터베이스 · 전자결재 · 모바일앱 일체형</span>
+    <h1>장기요양기관 전용 통합관리 ERP를 30일 무료로 시작하세요</h1>
+    <p>기관기호(11자리) 단위로 완전히 분리된 자체 서버 데이터베이스와 요양보호사·수급자·사회복지사 모바일 앱, 전자서명 제공기록지까지 별도 설치 없이 바로 개통됩니다.</p>
+    <div class="feat-pills">
+      <span class="feat-pill">기관별 데이터 완전 격리</span>
+      <span class="feat-pill">수급자·직원·일정·청구·급여 통합</span>
+      <span class="feat-pill">모바일 제공기록지·전자서명</span>
+      <span class="feat-pill">기존 엑셀 자료 즉시 일괄 이관</span>
+    </div>
+  </section>
+
+  <section class="card" id="su-form-card">
+    <h2 class="card-title">신규 기관 도입 신청서</h2>
+    <form id="su-form" novalidate onsubmit="submitTenantSignup(event)">
+      <div class="fgrid">
+        <div class="fld">
+          <label for="su-agency">장기요양기관기호 (11자리 숫자) <span class="req">*</span></label>
+          <input class="inp" id="su-agency" inputmode="numeric" maxlength="13" placeholder="예: 33020001234" required>
+          <span class="hint">하이픈(-) 없이 숫자 11자리로 자동 정리됩니다.</span>
+        </div>
+        <div class="fld">
+          <label for="su-name">기관명 <span class="req">*</span></label>
+          <input class="inp" id="su-name" maxlength="60" placeholder="예: 행복방문요양센터" required>
+        </div>
+        <div class="fld">
+          <label for="su-contact-nm">대표자 / 담당자 성함 <span class="req">*</span></label>
+          <input class="inp" id="su-contact-nm" maxlength="30" placeholder="예: 김원장" required>
+        </div>
+        <div class="fld">
+          <label for="su-contact-ph">연락처 (휴대폰 또는 대표번호) <span class="req">*</span></label>
+          <input class="inp" id="su-contact-ph" inputmode="tel" maxlength="20" placeholder="예: 010-1234-5678" required>
+        </div>
+        <div class="fld">
+          <label for="su-login-id">희망 관리자 로그인 아이디 <span class="req">*</span></label>
+          <input class="inp" id="su-login-id" maxlength="30" value="원장" placeholder="예: 원장 또는 admin" required>
+        </div>
+        <div class="fld">
+          <label for="su-prev-sys">기존 사용 관리 방식</label>
+          <select class="inp" id="su-prev-sys">
+            <option value="기존 사용 프로그램 없음">기존 사용 프로그램 없음 (신규 개설)</option>
+            <option value="엑셀·수기 관리">엑셀 · 수기 문서 관리</option>
+            <option value="기타 장기요양 프로그램">기타 장기요양 청구 프로그램</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="su-pw">희망 관리자 비밀번호 (4자 이상) <span class="req">*</span></label>
+          <input class="inp" id="su-pw" type="password" maxlength="40" autocomplete="new-password" placeholder="로그인에 사용할 비밀번호 입력" required>
+        </div>
+        <div class="fld">
+          <label for="su-pw2">비밀번호 확인 <span class="req">*</span></label>
+          <input class="inp" id="su-pw2" type="password" maxlength="40" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력" required>
+        </div>
+        <div class="fld full">
+          <label>제공 급여 유형 (복수 선택 가능)</label>
+          <div class="svc-grid">
+            <label class="svc-chk"><input type="checkbox" name="su-svc" value="방문요양" checked> 방문요양</label>
+            <label class="svc-chk"><input type="checkbox" name="su-svc" value="방문목욕"> 방문목욕</label>
+            <label class="svc-chk"><input type="checkbox" name="su-svc" value="방문간호"> 방문간호</label>
+            <label class="svc-chk"><input type="checkbox" name="su-svc" value="주야간보호"> 주야간보호</label>
+          </div>
+        </div>
+        <div class="fld full">
+          <label for="su-memo">도입 문의 · 요청사항 (선택)</label>
+          <textarea class="inp" id="su-memo" rows="3" maxlength="400" placeholder="예: 수급자 약 25명, 기존 엑셀 명단 이전 상담 희망"></textarea>
+        </div>
+      </div>
+
+      <div id="su-err" class="err-box" role="alert"></div>
+
+      <div class="submit-row">
+        <div class="policy-note">신청 접수 후 본사 확인 및 1클릭 개통 승인이 완료되면 입력하신 아이디·비밀번호로 바로 로그인할 수 있습니다.</div>
+        <button type="submit" id="btn-su-submit" class="btn-submit">무료체험 30일 도입 신청하기</button>
+      </div>
+    </form>
+
+    <div id="su-done-card" class="done-box">
+      <span class="done-badge">도입 신청 접수 완료</span>
+      <h2>신규 기관 도입 신청이 정상적으로 접수되었습니다</h2>
+      <p style="font-size:13.5px;color:#475569;margin:0;">본사 승인 완료 즉시 신청하신 기관기호와 관리자 비밀번호로 로그인하실 수 있습니다.</p>
+      <div class="done-summary" id="su-done-summary"></div>
+      <div class="done-actions">
+        <a class="btn-erp" href="/erp.html">ERP 로그인 화면으로 이동</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var agEl = document.getElementById('su-agency');
+  if (agEl) {
+    agEl.addEventListener('input', function () {
+      var digits = String(agEl.value || '').replace(/\D/g, '').slice(0, 11);
+      if (agEl.value !== digits) agEl.value = digits;
+    });
+  }
+
+  function showErr(msg) {
+    var el = document.getElementById('su-err');
+    if (!el) return;
+    if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function escHtml(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  window.submitTenantSignup = async function (ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    showErr('');
+    var ag = String(document.getElementById('su-agency').value || '').replace(/\D/g, '');
+    var nm = String(document.getElementById('su-name').value || '').trim();
+    var cnm = String(document.getElementById('su-contact-nm').value || '').trim();
+    var cph = String(document.getElementById('su-contact-ph').value || '').trim();
+    var lid = String(document.getElementById('su-login-id').value || '').trim();
+    var pw = String(document.getElementById('su-pw').value || '').trim();
+    var pw2 = String(document.getElementById('su-pw2').value || '').trim();
+    var prevSys = String(document.getElementById('su-prev-sys').value || '').trim();
+    var memo = String(document.getElementById('su-memo').value || '').trim();
+    var svcs = Array.prototype.slice.call(document.querySelectorAll('input[name="su-svc"]:checked')).map(function (c) { return c.value; });
+
+    if (ag.length !== 11 || ag === '00000000000') {
+      showErr('장기요양기관기호 11자리 숫자를 정확히 입력해 주세요.');
+      document.getElementById('su-agency').focus();
+      return;
+    }
+    if (nm.length < 2) { showErr('기관명을 2자 이상 입력해 주세요.'); document.getElementById('su-name').focus(); return; }
+    if (cnm.length < 2) { showErr('대표자 또는 담당자 성함을 입력해 주세요.'); document.getElementById('su-contact-nm').focus(); return; }
+    if (cph.replace(/\D/g, '').length < 8) { showErr('연락 가능한 전화번호를 입력해 주세요.'); document.getElementById('su-contact-ph').focus(); return; }
+    if (lid.length < 2) { showErr('희망 관리자 아이디를 2자 이상 입력해 주세요.'); document.getElementById('su-login-id').focus(); return; }
+    if (pw.length < 4) { showErr('비밀번호는 4자 이상으로 입력해 주세요.'); document.getElementById('su-pw').focus(); return; }
+    if (pw !== pw2) { showErr('비밀번호 확인이 일치하지 않습니다.'); document.getElementById('su-pw2').focus(); return; }
+
+    var btn = document.getElementById('btn-su-submit');
+    btn.disabled = true;
+    btn.textContent = '접수 처리 중...';
+    try {
+      var res = await fetch('/api/public/tenant_signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agency: ag,
+          agencyName: nm,
+          contactName: cnm,
+          contactPhone: cph,
+          adminLoginId: lid,
+          adminPassword: pw,
+          services: svcs.length ? svcs : ['방문요양'],
+          prevSystem: prevSys,
+          memo: memo
+        })
+      });
+      var j = await res.json().catch(function () { return { ok: false, error: '서버 응답을 해석할 수 없습니다.' }; });
+      if (!res.ok || !j || !j.ok) {
+        showErr((j && j.error) ? j.error : '도입 신청 접수에 실패했습니다.');
+        return;
+      }
+      var req = j.request || {};
+      document.getElementById('su-form').style.display = 'none';
+      document.getElementById('su-done-summary').innerHTML =
+        '<div><b>접수번호:</b> ' + escHtml(req.id || ('REQ_' + ag)) + '</div>' +
+        '<div><b>기관기호:</b> ' + escHtml(req.agency || ag) + '</div>' +
+        '<div><b>기관명:</b> ' + escHtml(req.agencyName || nm) + '</div>' +
+        '<div><b>담당자:</b> ' + escHtml((req.contactName || cnm) + ' (' + (req.contactPhone || cph) + ')') + '</div>' +
+        '<div><b>희망 아이디:</b> ' + escHtml(req.adminLoginId || lid) + '</div>' +
+        '<div><b>신청 서비스:</b> ' + escHtml((req.services || svcs).join(', ')) + '</div>';
+      document.getElementById('su-done-card').style.display = 'block';
+    } catch (e) {
+      showErr('서버 연결 중 오류가 발생했습니다: ' + ((e && e.message) || 'network'));
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '무료체험 30일 도입 신청하기';
+    }
+  };
+})();
+</script>
+</body>
+</html>

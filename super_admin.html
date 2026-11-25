@@ -118,6 +118,8 @@
   </div>
   <div class="sa-actions">
     <button type="button" class="btn pri" id="btn-sa-new" onclick="openTenantModal('')">+ 신규 기관 개설</button>
+    <a class="btn" href="/signup.html" target="_blank">신규 가입신청서</a>
+    <button type="button" class="btn" onclick="copySignupUrl()">신청서 주소 복사</button>
     <button type="button" class="btn" onclick="loadOverview()">새로고침</button>
     <a class="btn" href="/admin_dashboard.html">상담관제</a>
     <a class="btn blue" href="/erp.html">ERP 바로가기</a>
@@ -147,6 +149,32 @@
     <div class="kpi-card"><div class="kpi-lbl">무료 · 직영 기관</div><div class="kpi-val" id="kpi-free">0</div><div class="kpi-sub" id="kpi-free-sub">영구무료 / 소규모무료</div></div>
     <div class="kpi-card"><div class="kpi-lbl">무료체험 중</div><div class="kpi-val" id="kpi-trial">0</div><div class="kpi-sub">도입 검토 센터</div></div>
     <div class="kpi-card"><div class="kpi-lbl">만료임박 · 미납 · 잠금</div><div class="kpi-val" id="kpi-warn">0</div><div class="kpi-sub">D-7 · 유예 · 제한</div></div>
+  </section>
+
+  <section class="card" id="sa-pending-card" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-weight:900;font-size:14px;color:#1B365D;">신규 도입 · 무료체험 신청 대기함</span>
+        <span class="tag t-trial" id="sa-pending-badge">대기 0건</span>
+      </div>
+      <span style="font-size:12px;color:#475569;">1클릭 승인 시 30일 무료체험 계정이 자동 개통되며 신청서 비밀번호가 즉시 적용됩니다.</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="sa-tbl">
+        <thead>
+          <tr>
+            <th>신청일시</th>
+            <th>기관기호</th>
+            <th>기관명 · 급여유형</th>
+            <th>담당자 · 연락처</th>
+            <th>희망 아이디</th>
+            <th>기존시스템 · 메모</th>
+            <th>승인 관리</th>
+          </tr>
+        </thead>
+        <tbody id="sa-pending-tbody"></tbody>
+      </table>
+    </div>
   </section>
 
   <section class="card">
@@ -287,7 +315,7 @@
           <div class="chk-row">
             <label><input type="checkbox" id="t-f-erp" checked> 기본 ERP 전체</label>
             <label><input type="checkbox" id="t-f-msg" checked> 스마트폰앱·메신저·봇·푸시</label>
-            <label><input type="checkbox" id="t-f-consult" checked> 통합 상담관제</label>
+            <label><input type="checkbox" id="t-f-consult"> 통합 상담관제</label>
             <label><input type="checkbox" id="t-f-nhis" checked> 공단 자동연동</label>
           </div>
         </div>
@@ -430,10 +458,72 @@ async function loadOverview() {
     _overview = res;
     document.getElementById('sa-auth-bg').classList.remove('open');
     renderKpis(res.kpi || {});
+    renderPendingSignups();
     renderServerInfo(res.serverInfo || {});
     renderTenantTable();
   } catch (e) {
     toast(e.message || '조회 오류');
+  }
+}
+
+function renderPendingSignups() {
+  const pending = Array.isArray(_overview.pendingSignups) ? _overview.pendingSignups : [];
+  const card = document.getElementById('sa-pending-card');
+  const badge = document.getElementById('sa-pending-badge');
+  const tbody = document.getElementById('sa-pending-tbody');
+  if (!card || !tbody) return;
+  if (!pending.length) {
+    card.style.display = 'none';
+    tbody.innerHTML = '';
+    if (badge) badge.textContent = '대기 0건';
+    return;
+  }
+  card.style.display = 'block';
+  if (badge) badge.textContent = '대기 ' + pending.length + '건';
+  tbody.innerHTML = pending.map(r => {
+    const reqKey = r.id || r.agency || '';
+    const svcs = Array.isArray(r.services) ? r.services.join(', ') : (r.services || '방문요양');
+    const memoTxt = [r.prevSystem, r.memo].filter(Boolean).join(' · ') || '-';
+    return '<tr>' +
+      '<td>' + h(String(r.requestedAt || '').replace('T', ' ').slice(0, 16) || '-') + '</td>' +
+      '<td><b>' + h(r.agency) + '</b><div style="font-size:10.5px;color:#64748B;">' + h(r.orgNumber || '') + '</div></td>' +
+      '<td><b>' + h(r.agencyName) + '</b><div style="font-size:11px;color:#475569;">' + h(svcs) + '</div></td>' +
+      '<td>' + h(r.contactName) + '<div style="font-size:11px;color:#475569;">' + h(r.contactPhone) + '</div></td>' +
+      '<td><code>' + h(r.adminLoginId || '원장') + '</code></td>' +
+      '<td style="max-width:220px;word-break:break-word;">' + h(memoTxt) + '</td>' +
+      '<td><div class="act-cell">' +
+        '<button type="button" class="btn xs pri" onclick="approveSignupReq(\'' + h(reqKey) + '\')">1클릭 승인 · 30일 체험</button>' +
+        '<button type="button" class="btn xs danger" onclick="rejectSignupReq(\'' + h(reqKey) + '\')">반려</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function approveSignupReq(reqKey) {
+  if (!reqKey) return;
+  try {
+    const res = await saApi('/api/super/signup/approve', { id: reqKey, trialDays: 30, actor: '슈퍼관리자' });
+    toast('기관 30일 무료체험 개통 승인이 완료되었습니다.');
+    await loadOverview();
+    if (res.welcomeMessage) {
+      document.getElementById('welcome-msg-box').value = res.welcomeMessage;
+      document.getElementById('md-welcome').classList.add('open');
+    }
+  } catch (e) {
+    alert(e.message || '승인 처리 실패');
+  }
+}
+
+async function rejectSignupReq(reqKey) {
+  if (!reqKey) return;
+  const reason = prompt('반려 사유를 입력하세요 (선택 사항):', '확인 불가');
+  if (reason === null) return;
+  try {
+    await saApi('/api/super/signup/reject', { id: reqKey, reason: reason || '', actor: '슈퍼관리자' });
+    toast('가입 신청을 반려 처리했습니다.');
+    await loadOverview();
+  } catch (e) {
+    alert(e.message || '반려 처리 실패');
   }
 }
 
@@ -449,19 +539,33 @@ function renderKpis(k) {
 }
 
 function renderServerInfo(info) {
-  const activeUrl = info.tunnelUrl || info.localUrl || window.location.origin;
-  document.getElementById('sa-url-pill').textContent = (info.tunnelActive && info.tunnelUrl) ? ('외부 HTTPS 연결: ' + info.tunnelUrl) : ('로컬 서버: ' + (info.localUrl || window.location.origin));
+  const erpUrl = info.erpUrl || info.fixedPortalUrl || ((info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html');
+  const appUrl = info.appUrl || 'https://happycare-kr.github.io/go/';
+  const signupUrl = info.signupUrl || 'https://happycare-kr.github.io/go/signup.html';
+  const domainBadge = info.namedConfigured && info.namedHostname
+    ? ('고정 도메인: https://' + info.namedHostname)
+    : (info.isFixedDomain ? ('서비스 도메인: ' + info.publicBaseUrl) : ((info.tunnelActive && info.tunnelUrl) ? ('외부 HTTPS 연결: ' + info.tunnelUrl) : ('로컬 서버: ' + (info.localUrl || window.location.origin))));
+  document.getElementById('sa-url-pill').textContent = domainBadge;
   document.getElementById('sa-srv-info').innerHTML =
     '<b>현재 구동 중인 서버 · 저장 경로</b><br>' +
-    '• <b>고객 접속 주소:</b> <code>' + h(activeUrl + '/erp.html') + '</code><br>' +
+    '• <b>고객 ERP 접속 주소' + (info.isFixedDomain ? ' (고정 도메인)' : ' (고정 포털 우선)') + ':</b> <code>' + h(erpUrl) + '</code><br>' +
+    '• <b>고객 모바일앱 주소:</b> <code>' + h(appUrl) + '</code><br>' +
+    '• <b>신규 기관 도입 신청서:</b> <code>' + h(signupUrl) + '</code><br>' +
+    (info.quickTunnelUrl ? ('• <b>실시간 임시 터널(진단용):</b> <code>' + h(info.quickTunnelUrl) + '</code><br>') : '') +
     '• <b>로컬 DB 저장소:</b> <code>' + h(info.dataDir || '-') + '\\&lt;기관기호11자리&gt;</code><br>' +
-    '• <b>사내 NAS 미러:</b> <code>' + h(info.nasDir || '미연결') + '</code>';
+    '• <b>사내 NAS 미러:</b> <code>' + h(info.nasDir || '미연결') + '</code> · <b>GAS 동기화:</b> ' + (info.gasSyncEnabled ? '활성' : '비활성(자체서버 단독)');
 }
 
 function copyMainLoginUrl() {
   const info = _overview.serverInfo || {};
-  const u = (info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html';
+  const u = info.erpUrl || ((info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html');
   navigator.clipboard?.writeText(u).then(() => toast('접속 주소 복사 완료: ' + u)).catch(() => prompt('아래 주소를 복사하세요:', u));
+}
+
+function copySignupUrl() {
+  const info = _overview.serverInfo || {};
+  const u = info.signupUrl || 'https://happycare-kr.github.io/go/signup.html';
+  navigator.clipboard?.writeText(u).then(() => toast('가입 신청서 주소 복사 완료: ' + u)).catch(() => prompt('아래 주소를 복사하세요:', u));
 }
 
 function setFilter(f) {
@@ -542,6 +646,7 @@ function renderTenantTable() {
         '<button type="button" class="btn xs" onclick="openTenantModal(\'' + h(t.agency) + '\')">설정</button>' +
         '<button type="button" class="btn xs" onclick="openExtendModal(\'' + h(t.agency) + '\')">입금이력</button>' +
         lockBtn +
+        '<button type="button" class="btn xs" onclick="downloadTenantZip(\'' + h(t.agency) + '\')">개별백업</button>' +
         '<button type="button" class="btn xs blue" onclick="openWelcomeFor(\'' + h(t.agency) + '\')">카톡안내</button>' +
       '</div></td>' +
     '</tr>';
@@ -574,7 +679,7 @@ function applyPreset(kind) {
     document.getElementById('t-fee').value = '0';
     document.getElementById('t-exp').value = '';
     document.getElementById('t-max-pts').value = '0';
-    setFeats(true, true, true, true);
+    setFeats(true, true, false, true);
   } else if (kind === 'FREE_SMALL') {
     document.getElementById('t-btype').value = 'FREE_TIER';
     document.getElementById('t-plan').value = '소규모 무료플랜 (15명)';
@@ -588,7 +693,7 @@ function applyPreset(kind) {
     document.getElementById('t-fee').value = '0';
     document.getElementById('t-exp').value = d30;
     document.getElementById('t-max-pts').value = '0';
-    setFeats(true, true, true, true);
+    setFeats(true, true, false, true);
   } else if (kind === 'BASIC_30') {
     document.getElementById('t-btype').value = 'PAID';
     document.getElementById('t-plan').value = '베이직 (ERP 단독)';
@@ -602,7 +707,7 @@ function applyPreset(kind) {
     document.getElementById('t-fee').value = '50000';
     if (!document.getElementById('t-exp').value) document.getElementById('t-exp').value = d30;
     document.getElementById('t-max-pts').value = '0';
-    setFeats(true, true, true, true);
+    setFeats(true, true, false, true);
   }
 }
 
@@ -644,7 +749,7 @@ function openTenantModal(ag) {
   const linkedEl = document.getElementById('t-linked-ags');
   if (linkedEl) linkedEl.value = linkedList.join(', ');
   document.getElementById('t-memo').value = t ? (t.memo || '') : '';
-  const f = (t && t.features) || { erp: true, messengerApp: true, consult: true, nhisAuto: true };
+  const f = (t && t.features) || { erp: true, messengerApp: true, consult: false, nhisAuto: true };
   setFeats(f.erp, f.messengerApp, f.consult, f.nhisAuto);
   document.getElementById('btn-t-delete').style.display = (t && !t.isInternalProtected) ? 'inline-flex' : 'none';
   document.getElementById('md-tenant').classList.add('open');
@@ -704,24 +809,61 @@ async function deleteCurrentTenant() {
   }
 }
 
+async function downloadTenantZip(ag) {
+  if (!ag) return;
+  try {
+    const pin = getSaPin();
+    const headers = {};
+    if (pin) headers['X-HC-Super-Auth'] = pin;
+    const r = await fetch('/api/super/tenant/export?agency=' + encodeURIComponent(ag), { headers, cache: 'no-store' });
+    if (r.status === 401) {
+      document.getElementById('sa-auth-bg').classList.add('open');
+      alert('본사 관리자 인증이 필요합니다.');
+      return;
+    }
+    if (!r.ok) {
+      const errJ = await r.json().catch(() => ({}));
+      alert(errJ.error || ('백업 다운로드 실패 HTTP ' + r.status));
+      return;
+    }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'L1_backup_' + ag + '.zip';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      try { URL.revokeObjectURL(url); } catch (_) {}
+      try { a.remove(); } catch (_) {}
+    }, 1000);
+    toast('기관 [' + ag + '] 개별 백업(ZIP) 다운로드 시작');
+  } catch (e) {
+    alert(e.message || '개별 백업 오류');
+  }
+}
+
 function openWelcomeFor(ag) {
   const t = (_overview.tenants || []).find(x => x.agency === ag);
   if (!t) return;
   const info = _overview.serverInfo || {};
-  const loginUrl = (info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html';
+  const loginUrl = info.erpUrl || info.fixedPortalUrl || ((info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html');
+  const rawAppUrl = info.appUrl || 'https://happycare-kr.github.io/go/';
+  const appUrlWithAg = rawAppUrl + (rawAppUrl.indexOf('?') >= 0 ? '&ag=' : '?ag=') + encodeURIComponent(t.agency);
   const msg =
     '[L1 장기요양 통합관리 시스템 개통 안내]\n' +
     '기관명: ' + t.agencyName + '\n' +
     '기관기호(11자리): ' + t.agency + '\n' +
     '이용 플랜: ' + (t.planName || t.billingType) + '\n' +
     '만료일: ' + (t.expiresAt || '제한 없음 (무료)') + '\n\n' +
-    '■ 접속 주소\n' + loginUrl + '\n\n' +
+    '■ 관리자 ERP 접속 주소\n' + loginUrl + '\n\n' +
+    '■ 종사자·수급자 모바일앱 주소 (기관 자동지정)\n' + appUrlWithAg + '\n\n' +
     '■ 로그인 정보\n' +
     '- 기관기호(11자리): ' + t.agency + '\n' +
     '- 관리자 아이디: ' + (t.adminLoginId || '원장') + '\n' +
     '- 비밀번호: (안내받은 비밀번호)\n\n' +
     '■ 3분 초기 세팅 순서\n' +
-    '1) 위 주소로 접속해 기관기호·아이디·비밀번호로 로그인\n' +
+    '1) 위 ERP 주소로 접속해 기관기호·아이디·비밀번호로 로그인\n' +
     '2) 첫 화면 안내 마법사에서 [기존 장기요양 프로그램 자료 가져오기] 또는 엑셀 일괄 업로드\n' +
     '3) 상단 [모바일앱] QR코드 스캔으로 보호자·요양보호사 앱 즉시 개통';
   document.getElementById('welcome-msg-box').value = msg;

@@ -1,4 +1,4 @@
-// 행복케어 스마트 통합앱 PWA Service Worker (v70 no-store + Web Push 알림 수신·자동설정·딥링크)
+// L1 장기요양 통합앱 PWA Service Worker (v70 no-store + Web Push 알림 수신·자동설정·딥링크)
 self.addEventListener('install', (e) => { self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
   e.waitUntil(
@@ -17,7 +17,7 @@ self.addEventListener('push', (e) => {
   } catch (_) {
     try { d = { body: e.data ? e.data.text() : '새 알림이 도착했습니다.' }; } catch (_2) {}
   }
-  const title = d.title || '행복케어 업무 메신저';
+  const title = d.title || 'L1 업무 메신저';
   const opts = {
     body: d.body || '새 메시지 또는 요청이 도착했습니다.',
     icon: '/assets/app_icon_192.png',

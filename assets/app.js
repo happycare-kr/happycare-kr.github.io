@@ -146,29 +146,78 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. 2026 Official NHIS Calculator
-  const gradeData = {
-    '1': { name: '1등급', limit: 2512900 },
-    '2': { name: '2등급', limit: 2331200 },
-    '3': { name: '3등급', limit: 1528200 },
-    '4': { name: '4등급', limit: 1409700 },
-    '5': { name: '5등급', limit: 1208900 },
-    '6': { name: '인지지원등급', limit: 676320 }
+  // 5. 2026 & 2027 Official NHIS Calculator
+  const TARIFF_BY_YEAR = {
+    '2026': {
+      titlePrefix: '2026년',
+      footnote: '※ 실제 본인부담금은 월 이용 일수 및 가산 여부에 따라 달라집니다.<br>보건복지부·국민건강보험공단 공식 고시 기준에 따라 투명하게 안내해 드립니다.',
+      grades: {
+        '1': { name: '1등급', limit: 2512900 },
+        '2': { name: '2등급', limit: 2331200 },
+        '3': { name: '3등급', limit: 1528200 },
+        '4': { name: '4등급', limit: 1409700 },
+        '5': { name: '5등급', limit: 1208900 },
+        '6': { name: '인지지원등급', limit: 676320 }
+      },
+      visitFees: {
+        '30': 17450, '60': 25320, '90': 34120, '120': 43430,
+        '150': 50640, '180': 57020, '210': 63530, '240': 70080
+      },
+      visitLabels: {
+        '30': '30분 · 17,450원',
+        '60': '1시간(60분) · 25,320원',
+        '90': '1시간 30분(90분) · 34,120원',
+        '120': '2시간(120분) · 43,430원',
+        '150': '2시간 30분(150분) · 50,640원',
+        '180': '3시간(180분) · 57,020원',
+        '210': '3시간 30분(210분) · 63,530원',
+        '240': '4시간(240분) · 70,080원'
+      },
+      bath: [
+        ['가정 방문목욕', '(차량미이용)', 50100],
+        ['차량목욕 · 가정내', '(협력연계)', 80230],
+        ['차량목욕 · 차량내', '(협력연계)', 88990]
+      ]
+    },
+    '2027': {
+      titlePrefix: '2027년(예상)',
+      footnote: '※ 2027년 수치는 보건복지부 제5차 장기요양위원회(2026.10.30) 의결 예상수가 기준입니다.<br>세부 금액은 관보 최종 고시 및 국민건강보험공단(1577-1000) 공지로 확정됩니다.',
+      grades: {
+        '1': { name: '1등급', limit: 2891400 },
+        '2': { name: '2등급', limit: 2682300 },
+        '3': { name: '3등급', limit: 1586300 },
+        '4': { name: '4등급', limit: 1462000 },
+        '5': { name: '5등급', limit: 1254900 },
+        '6': { name: '인지지원등급', limit: 700200 }
+      },
+      visitFees: {
+        '30': 18110, '60': 26280, '90': 35420, '120': 45080,
+        '150': 52560, '180': 59190, '210': 65940, '240': 72740
+      },
+      visitLabels: {
+        '30': '30분 · 18,110원',
+        '60': '1시간(60분) · 26,280원',
+        '90': '1시간 30분(90분) · 35,420원',
+        '120': '2시간(120분) · 45,080원',
+        '150': '2시간 30분(150분) · 52,560원',
+        '180': '3시간(180분) · 59,190원',
+        '210': '3시간 30분(210분) · 65,940원',
+        '240': '4시간(240분) · 72,740원'
+      },
+      bath: [
+        ['가정 방문목욕', '(차량미이용)', 51870],
+        ['차량목욕 · 가정내', '(협력연계)', 83070],
+        ['차량목욕 · 차량내', '(협력연계)', 92140]
+      ]
+    }
   };
-  const visitFees = {
-    '60': 25320,
-    '90': 34120,
-    '120': 43430,
-    '150': 50640,
-    '180': 57020,
-    '210': 63530,
-    '240': 70080
-  };
+  let selectedYear = '2026';
   let selectedGrade = '3';
   let selectedRate = 0.15;
   let selectedMins = '180';
   let selectedDays = 20;
 
+  const yearBtns = document.querySelectorAll('[data-tariff-year]');
   const gradeBtns = document.querySelectorAll('[data-grade]');
   const rateBtns = document.querySelectorAll('[data-rate]');
   const minsSelect = document.getElementById('calc-mins-select');
@@ -181,25 +230,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const resPlanLbl = document.getElementById('calc-res-planlbl');
   const resPerVisit = document.getElementById('calc-res-pervisit');
   const resPlanCopay = document.getElementById('calc-res-plancopay');
+  const calcFootnoteEl = document.getElementById('calc-footnote-text');
+  const bathTbody = document.querySelector('.tariff-table tbody');
 
   function fmtWon(n) {
     return Math.round(n).toLocaleString('ko-KR') + '원';
   }
+  function syncYearControls() {
+    const tf = TARIFF_BY_YEAR[selectedYear] || TARIFF_BY_YEAR['2026'];
+    gradeBtns.forEach(b => {
+      const g = tf.grades[b.dataset.grade];
+      const sm = b.querySelector('small');
+      if (g && sm) sm.textContent = fmtWon(g.limit);
+    });
+    if (minsSelect) {
+      Array.from(minsSelect.options).forEach(opt => {
+        if (tf.visitLabels[opt.value]) opt.textContent = tf.visitLabels[opt.value];
+      });
+    }
+    if (bathTbody && tf.bath) {
+      bathTbody.innerHTML = tf.bath.map(row => {
+        const fee = row[2];
+        const copay15 = Math.round(fee * 0.15);
+        return '<tr><td><strong>' + row[0] + '</strong> <span class="td-sub">' + row[1] + '</span></td><td>' + fmtWon(fee) + '</td><td><strong>' + fmtWon(copay15) + '</strong></td></tr>';
+      }).join('');
+    }
+    if (calcFootnoteEl) calcFootnoteEl.innerHTML = tf.footnote;
+  }
   function updateCalc() {
     if (!resLimit) return;
-    const g = gradeData[selectedGrade];
+    const tf = TARIFF_BY_YEAR[selectedYear] || TARIFF_BY_YEAR['2026'];
+    const g = tf.grades[selectedGrade] || tf.grades['3'];
     const limit = g.limit;
     const copay = Math.round(limit * selectedRate);
     const support = limit - copay;
     const ratePct = Math.round(selectedRate * 100);
-    resTitle.textContent = '2026년 ' + g.name + ' · 본인부담 ' + ratePct + '%';
+    resTitle.textContent = tf.titlePrefix + ' ' + g.name + ' · 본인부담 ' + ratePct + '%';
     resLimit.textContent = fmtWon(limit);
     resSupport.textContent = fmtWon(support);
     if (resSupportPct) resSupportPct.textContent = '(' + (100 - ratePct) + '%)';
     resCopay.textContent = fmtWon(copay);
 
     if (resPerVisit && resPlanCopay) {
-      const fee = visitFees[selectedMins] || 57020;
+      const fee = tf.visitFees[selectedMins] || tf.visitFees['180'];
       const perVisitCopay = Math.round(fee * selectedRate);
       const totalPlanCopay = Math.round(fee * selectedDays * selectedRate);
       if (resPlanLbl) resPlanLbl.textContent = '월 예상 본인부담금 (월 ' + selectedDays + '회 이용 기준)';
@@ -207,6 +280,15 @@ document.addEventListener('DOMContentLoaded', () => {
       resPerVisit.textContent = '1회 본인부담 ' + fmtWon(perVisitCopay) + ' (급여액 ' + fmtWon(fee) + ')';
     }
   }
+  yearBtns.forEach(b => {
+    b.addEventListener('click', () => {
+      yearBtns.forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      selectedYear = b.dataset.tariffYear || '2026';
+      syncYearControls();
+      updateCalc();
+    });
+  });
   gradeBtns.forEach(b => {
     b.addEventListener('click', () => {
       gradeBtns.forEach(x => x.classList.remove('active'));
@@ -225,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   if (minsSelect) minsSelect.addEventListener('change', e => { selectedMins = e.target.value; updateCalc(); });
   if (daysSelect) daysSelect.addEventListener('change', e => { selectedDays = parseInt(e.target.value, 10) || 20; updateCalc(); });
+  syncYearControls();
   updateCalc();
 
   // 6. FAQ Accordion (Pure class toggle so initial open item never clips text)
@@ -703,14 +786,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      if (t.includes('수가') || t.includes('본인부담') || t.includes('비용') || t.includes('계산')) {
-        appendBotMsg(`<strong>2026년 장기요양 월 한도액 및 본인부담금 (일반 15% 기준)</strong><br>• 1등급: 2,512,900원<br>• 2등급: 2,331,200원<br>• 3등급: 1,528,200원<br>• 4등급: 1,409,700원<br>• 5등급: 1,208,900원<br>• 표준 3시간(180분) 월 20회 이용 시 일반 본인부담금은 <strong>월 171,060원</strong>(감경 9%는 102,640원, 6%는 68,420원, 기초수급 0원)입니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">지금 바로 돌봄·파견 신청하기 (대화형)</button>`);
+      if (t.includes('수가') || t.includes('본인부담') || t.includes('비용') || t.includes('계산') || t.includes('2027') || t.includes('한도')) {
+        appendBotMsg(`<strong>2026년 확정 vs 2027년 예상 월 한도액 · 본인부담금</strong><br>• 1등급: 2,512,900원 → <strong>2,891,400원</strong> (+15.1%)<br>• 2등급: 2,331,200원 → <strong>2,682,300원</strong> (+15.1%)<br>• 3등급: 1,528,200원 → <strong>1,586,300원</strong><br>• 4등급: 1,409,700원 → <strong>1,462,000원</strong><br>• 5등급: 1,208,900원 → <strong>1,254,900원</strong><br>• 3시간(180분) 월 20회 일반(15%): 2026년 <strong>월 171,060원</strong>(1회 8,553원) / 2027년 예상 59,190원(1회 8,879원 · 월 <strong>177,570원</strong>)<br>• 가족요양 2027년 예상: 60분 26,280원(15% 3,942원) · 90분 35,420원(15% 5,313원)<br><span style="font-size:0.8em;color:#526669;">※ 2027년은 장기요양위원회 의결 예상수가 기준(관보 고시 확정 예정)</span><br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">지금 바로 돌봄·파견 신청하기 (대화형)</button>`);
       } else if (t.includes('등급') || t.includes('신청') || t.includes('인정조사')) {
         appendBotMsg(`<strong>장기요양등급 신청 절차 안내</strong><br>1) 국민건강보험공단 지사 또는 The건강보험 앱 접수<br>2) 공단 직원 가정 방문조사 (거동·인지 상태 확인)<br>3) 의사소견서 제출 및 등급판정위원회 심의 (약 3~4주 소요)<br><br>방문조사 전 준비 사항과 무료 등급신청 대행을 도와드립니다.<br><button type="button" class="chat-chip" onclick="window.__hcAsk('장기요양등급 신청 상담 시작')" style="margin-top:8px;background:#D95B43;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">등급 신청 상담 접수하기 (대화형)</button>`);
       } else if (t.includes('가족요양') || t.includes('60분') || t.includes('90분')) {
-        appendBotMsg(`<strong>가족요양 인정 기준 안내</strong><br>요양보호사 자격증을 가진 가족이 어르신을 돌보실 때:<br>• <strong>기본 기준:</strong> 1일 60분 (월 최대 20일), 타 직종 월 근로시간 160시간 미만<br>• <strong>예외 기준(1일 90분·월 31일):</strong> 배우자 요양보호사가 만 65세 이상이거나 중증 치매 문제행동이 있는 경우<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">가족요양 상담 접수하기 (대화형)</button>`);
+        appendBotMsg(`<strong>가족요양 인정 기준 안내</strong><br>요양보호사 자격증을 가진 가족이 어르신을 돌보실 때:<br>• <strong>기본 기준:</strong> 1일 60분 (월 최대 20일), 타 직종 월 근로시간 160시간 미만<br>• <strong>예외 기준(1일 90분·월 31일):</strong> 배우자 요양보호사가 만 65세 이상이거나 중증 치매 문제행동이 있는 경우<br>• <strong>수가 비교(15%):</strong> 2026년 60분 25,320원(3,798원)·90분 34,120원(5,118원) / 2027년 예상 60분 26,280원(3,942원)·90분 35,420원(5,313원)<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">가족요양 상담 접수하기 (대화형)</button>`);
       } else if (t.includes('목욕')) {
-        appendBotMsg(`<strong>2026년 방문목욕 1회 급여비용 (일반 본인부담 15%)</strong><br>• 차량이용(차량내): 88,990원 (본인부담 <strong>13,340원</strong>)<br>• 차량이용(가정내): 80,230원 (본인부담 <strong>12,030원</strong>)<br>• 차량미이용(가정목욕): 50,100원 (본인부담 <strong>7,515원</strong>)<br>요양보호사 2명이 방문하여 안전하게 목욕을 도와드립니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">방문목욕 신청하기 (대화형)</button>`);
+        appendBotMsg(`<strong>2026년 확정 vs 2027년 예상 방문목욕 1회 수가 (일반 15%)</strong><br>• 차량이용(차량내): 88,990원(13,340원) → 2027 예상 92,140원(<strong>13,821원</strong>)<br>• 차량이용(가정내): 80,230원(12,030원) → 2027 예상 83,070원(<strong>12,461원</strong>)<br>• 차량미이용(가정목욕): 50,100원(7,515원) → 2027 예상 51,870원(<strong>7,781원</strong>)<br>요양보호사 2명이 방문하여 안전하게 목욕을 도와드립니다.<br><br><button type="button" class="chat-chip" onclick="window.__hcAsk('돌봄·요양사 파견 신청 시작')" style="background:#0F6E72;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:700;">방문목욕 신청하기 (대화형)</button>`);
       } else if (t.includes('요양보호사') || t.includes('채용') || t.includes('구직') || t.includes('등록') || t.includes('일자리')) {
         startInteractiveFlow('worker', '요양보호사 구직 등록');
       } else if (t.includes('돌봄') || t.includes('파견') || t.includes('보호자') || t.includes('어르신') || t.includes('방문요양')) {
