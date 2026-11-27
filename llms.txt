@@ -103,4 +103,4 @@
 
 - [무료 요양상담 · 문의게시판 (다빈도 Q&A 24선)](https://happycare-kr.github.io/consult.html)
 - [장기요양 수가(2026·2027) · 기관 평가서식 무료 자료실 (8종)](https://happycare-kr.github.io/resources.html)
-- [전체 장기요양 실무 가이드 칼럼 (195편)](https://happycare-kr.github.io/guides/index.html)
+- [전체 장기요양 실무 가이드 칼럼 (203편)](https://happycare-kr.github.io/guides/index.html)
